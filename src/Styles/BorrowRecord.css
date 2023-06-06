@@ -1,0 +1,13 @@
+
+.BorrowSection {
+    margin-top: 10px;
+    border-top: 1px;
+    width: fit-content;
+    padding: 10px;
+    
+}
+
+.borrow-content {
+    margin: 40px;
+    height: auto;
+}

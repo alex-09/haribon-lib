@@ -37,7 +37,7 @@ function BookList(props) {
 
     // Borrow Function to SHOW INFORMATION about the book and the updated copies when borrowed by a patron
     const getInfo = async (bId, title) => { // bId = Material ID that the patron borrowed
-        alert("get info function called")
+        // alert("get info function called")
         let copies = 0
         let dateToday = new Date()
         let dateTomorrow = new Date()
@@ -69,6 +69,7 @@ function BookList(props) {
                 issue_due : dateTomorrow, // 2days after
                 issue_fine : 0 // 0
             })
+            window.location.reload(false);
         } 
         else {
             //Create a proper dialogbox here to ask for confirmation of the patron
@@ -112,7 +113,6 @@ function BookList(props) {
                     console.log('MATERIALS\t', materials)
                 setMaterialResult(materials)
                 setTestReadCounts(testReadCounts+1)
-                alert('read count '+testReadCounts)
             })
 
         }
@@ -183,7 +183,7 @@ function BookList(props) {
                     </Flex>
                     </Grid.Col>
                 </Grid>
-            </Container>
+            </Container> */}
 
             <Container fluid='true' className="head-search">
                 <Grid className="hs">
@@ -193,7 +193,7 @@ function BookList(props) {
                     <Grid.Col span={3}></Grid.Col>
                     <Grid.Col span={4}></Grid.Col>
                 </Grid>
-            </Container> */}
+            </Container> 
 
 
 

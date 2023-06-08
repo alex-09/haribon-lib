@@ -23,11 +23,6 @@ import { blue } from "@mui/material/colors";
 
 function BoksListBorrowComp(props) {
 
-    useEffect(()=>{
-      alert('Result')
-      console.log('RESULT OF SEARCH RES:\t', props.searchValue)
-    }, [])
-
     const tableP = {
         width: '80%',
         margin: '30px auto 20px auto',

@@ -9,6 +9,7 @@ import Home from "./layouts/Patron/Home";
 import Appointment from "./layouts/Patron/Appointment";
 import Resources from "./layouts/Patron/Resources";
 import TransactionRecord from "./layouts/Patron/TransactionRecord";
+import Admin from "./layouts/Patron/Routes/Admin";
 
 
 function App() {
@@ -27,7 +28,7 @@ function App() {
       <Route path= {"Appointment"} element = {<Appointment/>}/>
       <Route path={"Resources"} element = {<Resources/>}/>
       <Route path={"TransactionRecord"} element = {<TransactionRecord/>}/>
-
+      <Route path={"Admin"} element = {<Admin/>}/>
    
       </Routes>
     </MantineProvider>

@@ -73,6 +73,10 @@ function Appointment() {
               </Navbar.Section>
 
               <Navbar.Section>
+                <Button leftIcon={<IconReceipt/>} variant='subtle' color='dark' component={Link} to="/Admin" >Admin</Button>
+              </Navbar.Section>
+
+              <Navbar.Section>
                 <Logout/>
               </Navbar.Section>
 

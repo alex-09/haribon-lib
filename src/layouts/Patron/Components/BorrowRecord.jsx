@@ -50,7 +50,6 @@ function BorrowRecord() {
                     })
                 )
                 setTestReadCounts(testReadCounts+1)
-                alert('reads in issue: ', testReadCounts)
             })
 
         }

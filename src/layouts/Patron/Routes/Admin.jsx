@@ -1,8 +1,8 @@
 import {useState, useEffect} from "react";
-import {db} from "../Database/firebase-config";
+import {db} from "../../../Firebase-config";
 import {increment, setDoc, doc, query, collection, where, getDocs, onSnapshot, getDoc, QuerySnapshot, addDoc, documentId, updateDoc, deleteDoc} from "firebase/firestore";
 import { Container } from "react-bootstrap";
-import { Button, Table, Grid, Input, Center, Flex, Pagination, SimpleGrid, ActionIcon } from "@mantine/core";
+import { Button, Table, Grid, Input, Center, Flex, Pagination, SimpleGrid, ActionIcon, AppShell } from "@mantine/core";
 import '../Styles/Admin.css';
 import { IconSearch } from "@tabler/icons-react";
 import StdHome from './StdHome';
@@ -17,7 +17,31 @@ import AdminBorrowTable from "./AdminBorrowTable";
 import { Fragment } from "react";
 import AdminAppointmentTable from "./AdminAppointmentTable";
 
+import {
+    Navbar,
+    Header,  
+    Text,
+    MediaQuery,
+    Burger,
+    useMantineTheme,
+    Group, 
+    TextInput, 
+    NumberInput, 
+    Box
+  } from '@mantine/core';
+  
+  import DarkModeButton from '../../DarkModeButton';
+  import { Link } from 'react-router-dom';
+  import Logout from '../../Logout';
+  import { IconForms, IconHome2, IconReceipt, IconVocabulary } from '@tabler/icons-react';
+  import { useForm, isNotEmpty, isEmail, isInRange, hasLength, matches } from '@mantine/form';
+
 function Admin() {
+const [switchOff, setSwitchOff] = useState(true)
+    const theme = useMantineTheme();
+    const [opened, setOpened] = useState(false);
+
+
     const STATUS_ARR = ['not confirmed', 'confirmed', 'returned']
     const [status, setStatus] = useState('')
     const [activeMaterial, setActiveMaterial] = useState('')
@@ -72,8 +96,12 @@ function Admin() {
     
     
     const confirmation = (m_status, issueID, matID) => {
+
+       
         setActiveMaterial(matID)
         setActiveIssue(issueID)
+        console.log(switchOff, m_status,' ',issueID,' ',matID)
+        alert('running')
         if(m_status == 'confirmed'){
             //update to not confirmed
             setStatus(STATUS_ARR[0])
@@ -83,35 +111,31 @@ function Admin() {
         } else if (m_status == 'returned') {
             setStatus(STATUS_ARR[2])
         }
-        
-    }
 
-    // If admin has changed the status --> confirmed, returned, not confirmed
-    useEffect(()=> {
         const updateConfirmedMat = async ()=>{
-            if(status == 'confirmed'){
+            if(m_status == 'confirmed'){
                 // the due date must be 2 days after the confirmation
                 let dateToday = new Date()
                 let dateDue = dateToday //Date accepted by DB
                 dateDue.setDate(dateDue.getDate()+2) 
 
-                await updateDoc(doc(db, "Issue", activeIssue),{
+                await updateDoc(doc(db, "Issue", issueID),{
                     issue_status: status,
                     issue_due: dateDue
                 }).then(()=>{
                     // alert("SUCCESFFULLY CONFIRMED")
                     window.location.reload(false);
                 })
-            } else if(status == 'returned'){
+            } else if(m_status == 'returned'){
                 var answer = prompt('Are you sure to return this?')
                 alert('your anwer:'+(answer=='yes'))
                 if(answer == 'yes'){
-                    await deleteDoc(doc(db, "Issue", activeIssue))
+                    await deleteDoc(doc(db, "Issue", issueID))
                     // add one to the book you have
-                    await updateDoc(doc(db,'Material',activeMaterial),{
+                    await updateDoc(doc(db,'Material',matID),{
                         material_copies:increment(1)
                     })
-                    alert('it ran')
+                    // alert('it ran')
                 } else {
                     alert('You have cancelled to return the book')
                 }
@@ -120,7 +144,55 @@ function Admin() {
         }
         
         updateConfirmedMat()
-    }, [status])
+
+        console.log('before check')
+        
+        if(switchOff == false){
+            console.log(switchOff)
+            setSwitchOff(true)
+        } else {
+            console.log(switchOff)
+            setSwitchOff(false)
+        }
+        
+    }
+
+    // If admin has changed the status --> confirmed, returned, not confirmed
+    useEffect(()=> {
+        // const updateConfirmedMat = async ()=>{
+        //     if(status == 'confirmed'){
+        //         // the due date must be 2 days after the confirmation
+        //         let dateToday = new Date()
+        //         let dateDue = dateToday //Date accepted by DB
+        //         dateDue.setDate(dateDue.getDate()+2) 
+
+        //         await updateDoc(doc(db, "Issue", activeIssue),{
+        //             issue_status: status,
+        //             issue_due: dateDue
+        //         }).then(()=>{
+        //             // alert("SUCCESFFULLY CONFIRMED")
+        //             window.location.reload(false);
+        //         })
+        //     } else if(status == 'returned'){
+        //         var answer = prompt('Are you sure to return this?')
+        //         alert('your anwer:'+(answer=='yes'))
+        //         if(answer == 'yes'){
+        //             await deleteDoc(doc(db, "Issue", activeIssue))
+        //             // add one to the book you have
+        //             await updateDoc(doc(db,'Material',activeMaterial),{
+        //                 material_copies:increment(1)
+        //             })
+        //             // alert('it ran')
+        //         } else {
+        //             alert('You have cancelled to return the book')
+        //         }
+        //     }
+            
+        // }
+        
+        // updateConfirmedMat()
+        
+    }, [status, activeMaterial])
 
 
     const ll = (val, issueID, matID) => {
@@ -151,8 +223,6 @@ function Admin() {
     useEffect(()=>{
         const specResult = async () => {
             setSpecResult([])
-            console.log('spec result length')
-            console.log(specificResult.length)
             await issueResult.map((idd)=>{
                 let res = {}
                 const specificMat = getDoc(doc(db, "Material", idd.m_id)) 
@@ -210,14 +280,9 @@ function Admin() {
 
                 specificMat.then((doc)=>{
                     res = Object.assign(res, doc.data())   
-                    // alert('Material Result')
-                    // console.log(res)
 
-                    //fix this by finding out the duplicating problem... then remove this logic
                     if(!(specificResult.includes(res))){
                         setSpecResult(prev => (prev.concat(res)))  
-
-                        // setSearchRes(prev => (prev.concat(res)))
                     }
                     
                 })
@@ -254,7 +319,7 @@ function Admin() {
         })
         
         setSearchRes(filterSearch)
-        alert(filterSearch)
+        // alert(filterSearch)
     }
 
 
@@ -278,7 +343,73 @@ function Admin() {
 
   return (
     <>
-        <StdNav/>
+        <AppShell
+        styles={{
+          main: {
+            background: theme.colorScheme === 'dark' ? theme.colors.dark[8] : theme.colors.gray[0],
+          },
+        }}
+        navbarOffsetBreakpoint="sm"
+        asideOffsetBreakpoint="sm"
+        navbar={
+          <div>
+            <Navbar p="md" hiddenBreakpoint="sm" hidden={!opened} width={{ sm: 200, lg: 300 }}>
+        
+              <Navbar.Section>
+                  <Button leftIcon={<IconHome2/>} variant='subtle' color='dark' component={Link} to="/Home">Home</Button>
+              </Navbar.Section>
+              
+              <Navbar.Section>
+                <Button leftIcon={<IconForms/>} variant='subtle' color='dark' component={Link} to="/Appointment">Appointment</Button>
+              </Navbar.Section>
+
+              <Navbar.Section>
+                <Button leftIcon={<IconVocabulary/>} variant='subtle' color='dark' component={Link} to="/Resources">Resources</Button>
+              </Navbar.Section>
+
+              <Navbar.Section>
+                <Button leftIcon={<IconReceipt/>} variant='subtle' color='dark' component={Link} to="/TransactionRecord" >Transaction Records</Button>
+              </Navbar.Section>
+
+              <Navbar.Section>
+                <Button leftIcon={<IconReceipt/>} variant='subtle' color='dark' component={Link} to="/Admin" >Admin</Button>
+              </Navbar.Section>
+
+              <Navbar.Section>
+                <Logout/>
+              </Navbar.Section>
+
+            </Navbar>
+          </div>
+        }
+        header={
+          <Header height={{ base: 50, md: 70 }} p="md">
+            <div style={{ display: 'flex', alignItems: 'center', height: '100%' }}>
+                <source />
+              <MediaQuery largerThan="sm" styles={{ display: 'none' }}>
+                <Burger
+                  opened={opened}
+                  onClick={() => setOpened((o) => !o)}
+                  size="sm"
+                  color={theme.colors.gray[6]}
+                  mr="xl"
+                />
+                
+              </MediaQuery>
+              <Text>Pamantasan ng Lungsod ng Maynila</Text>
+              <div  style={{
+                    alignItems: "center",
+                    justifyContent: 'flex-end',
+                    marginLeft: 'auto',
+                    }}>
+                
+                <DarkModeButton/> 
+                </div>
+            </div>
+    
+          </Header>
+        }
+        >
 
         <Container fluid='true' className="head-search">
             
@@ -324,7 +455,9 @@ function Admin() {
         {/* //abt */}
         <AdminBorrowTable       hide={hiddRese} searchValue={searchRes} admin_columns={columns}/>
         <AdminAppointmentTable  hide={hiddAppt}/>
-
+        
+        
+    </AppShell>
     <Footer/>
     </>
   );

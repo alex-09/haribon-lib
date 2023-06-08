@@ -1,7 +1,7 @@
 import {useState, useEffect} from "react";
 import '../Styles/Admin.css';
 
-import { db } from "../Database/firebase-config";
+import { db } from "../../../Firebase-config";
 import {collection, getDocs} from "firebase/firestore";
 
 

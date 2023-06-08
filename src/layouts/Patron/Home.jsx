@@ -60,6 +60,10 @@ function Home() {
               </Navbar.Section>
 
               <Navbar.Section>
+                <Button leftIcon={<IconReceipt/>} variant='subtle' color='dark' component={Link} to="/Admin" >Admin</Button>
+              </Navbar.Section>
+
+              <Navbar.Section>
                 <Logout/>
               </Navbar.Section>
 
@@ -95,6 +99,7 @@ function Home() {
           </Header>
         }
       >
+        
         <Text>Welcome, {name}</Text>
         <Text>{email}</Text>
         <Text>Results:</Text>

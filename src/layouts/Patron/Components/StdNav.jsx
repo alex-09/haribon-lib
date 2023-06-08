@@ -1,8 +1,10 @@
 import React from 'react';
+import "../Styles/Home.css"
 import "../Styles/StdNav.css"
+
 import {Nav,Navbar} from 'react-bootstrap';
 import {Link} from "react-router-dom";
-
+import logo from '../../../assets/logo.png';
 import {BsHouseDoorFill, BsFillFileTextFill, BsBookHalf, BsFillPlayBtnFill } from "react-icons/bs";
 
 function StdNav() {
@@ -12,7 +14,7 @@ function StdNav() {
       
     <Navbar.Brand>
         <ul className='logo'>
-            <li><img src={logo} width="80px" height="auto" />{' '}</li>
+            <li><img src={logo} width="80px" height="auto" /></li>
         </ul>
         <ul>
             <li className='h1'>PAMANTASAN NG LUNGSOD NG MAYNILA</li>

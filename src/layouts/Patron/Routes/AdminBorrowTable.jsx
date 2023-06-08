@@ -23,10 +23,6 @@ import { blue } from "@mui/material/colors";
 
 function AdminBorrowTable(props) {
 
-    useEffect(()=>{
-      alert('Result')
-      console.log('RESULT OF SEARCH RES:\t', props.searchValue)
-    }, [])
 
     const tableP = {
         width: '80%',
